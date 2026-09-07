@@ -1,0 +1,63 @@
+<section class="agent-page">
+
+  <div class="page-header">
+    <p class="eyebrow">AI Agents Lab</p>
+
+    <h1>AI Playground</h1>
+
+    <p>
+      Talk directly to our first Developer Assistant.
+      At this stage the agent has no tools and no access
+      to the mock internal systems.
+    </p>
+  </div>
+
+  <div class="playground-card">
+
+    <label for="message">
+      Ask the Developer Assistant
+    </label>
+
+    <textarea
+      id="message"
+      rows="6"
+      placeholder="Example: Explain Angular dependency injection in two sentences."
+      [value]="message()"
+      (input)="updateMessage($event)"
+    ></textarea>
+
+    <div class="actions">
+      <button
+        type="button"
+        [disabled]="!message().trim() || loading()"
+        (click)="sendMessage()"
+      >
+        @if (loading()) {
+          Thinking...
+        } @else {
+          Send message
+        }
+      </button>
+    </div>
+
+  </div>
+
+  @if (error()) {
+    <div class="error-message">
+      {{ error() }}
+    </div>
+  }
+
+  @if (answer()) {
+
+    <section class="answer-card">
+
+      <h2>Assistant</h2>
+
+      <p>{{ answer() }}</p>
+
+    </section>
+
+  }
+
+</section>

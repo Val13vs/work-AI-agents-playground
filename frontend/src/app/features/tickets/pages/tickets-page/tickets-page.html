@@ -1,0 +1,99 @@
+<section class="tickets-page">
+  <div class="page-header">
+    <p class="eyebrow">Developer Portal</p>
+    <h1>Development Tickets</h1>
+
+    <p>
+      Mock development tasks that will later be accessible
+      to our AI agents through tools.
+    </p>
+  </div>
+
+  @if (error()) {
+    <div class="error-message">
+      {{ error() }}
+    </div>
+  }
+
+  <div class="tickets-layout">
+
+    <section class="ticket-list">
+      <h2>Tickets</h2>
+
+      @if (loading()) {
+        <p>Loading tickets...</p>
+      } @else {
+
+        @for (ticket of tickets(); track ticket.id) {
+          <button
+            class="ticket-card"
+            [class.selected]="selectedTicket()?.id === ticket.id"
+            (click)="selectTicket(ticket.id)"
+          >
+            <div class="ticket-card-header">
+              <strong>{{ ticket.id }}</strong>
+
+              <span class="status">
+                {{ ticket.status }}
+              </span>
+            </div>
+
+            <h3>{{ ticket.title }}</h3>
+
+            <p>{{ ticket.description }}</p>
+          </button>
+        } @empty {
+          <p>No tickets available.</p>
+        }
+
+      }
+    </section>
+
+    <section class="ticket-details">
+      <h2>Ticket Details</h2>
+
+      @if (detailsLoading()) {
+
+        <p>Loading ticket details...</p>
+
+      } @else if (selectedTicket(); as ticket) {
+
+        <div class="details-card">
+
+          <div class="details-heading">
+            <span>{{ ticket.id }}</span>
+            <span>{{ ticket.status }}</span>
+          </div>
+
+          <h3>{{ ticket.title }}</h3>
+
+          <p>{{ ticket.description }}</p>
+
+          <h4>Requirements</h4>
+
+          <ul>
+            @for (requirement of ticket.requirements; track requirement) {
+              <li>{{ requirement }}</li>
+            }
+          </ul>
+
+          @if (ticket.relatedApi) {
+            <div class="related-api">
+              <strong>Related API:</strong>
+              {{ ticket.relatedApi }}
+            </div>
+          }
+
+        </div>
+
+      } @else {
+
+        <div class="empty-state">
+          Select a ticket to view its details.
+        </div>
+
+      }
+    </section>
+
+  </div>
+</section>

@@ -1,0 +1,151 @@
+<section class="api-docs-page">
+
+  <div class="page-header">
+    <p class="eyebrow">Developer Portal</p>
+
+    <h1>API Documentation</h1>
+
+    <p>
+      Mock internal API documentation that will later
+      become accessible to the AI agent through tools.
+    </p>
+  </div>
+
+  @if (error()) {
+    <div class="error-message">
+      {{ error() }}
+    </div>
+  }
+
+  <div class="docs-layout">
+
+    <section class="resource-list">
+      <h2>Resources</h2>
+
+      @if (loading()) {
+
+        <p>Loading documentation...</p>
+
+      } @else {
+
+        @for (
+          item of documentation();
+          track item.resource
+          ) {
+
+          <button
+            class="resource-card"
+            [class.selected]="
+              selectedDocumentation()?.resource === item.resource
+            "
+            (click)="selectResource(item.resource)"
+          >
+
+            <strong>
+              {{ item.resource }}
+            </strong>
+
+            <p>
+              {{ item.description }}
+            </p>
+
+            <span>
+              {{ item.endpoints.length }} endpoints
+            </span>
+
+          </button>
+
+        } @empty {
+
+          <p>No API documentation available.</p>
+
+        }
+
+      }
+    </section>
+
+    <section class="documentation-details">
+
+      <h2>Documentation</h2>
+
+      @if (detailsLoading()) {
+
+        <p>Loading API documentation...</p>
+
+      } @else if (
+        selectedDocumentation();
+        as documentation
+        ) {
+
+        <div class="documentation-card">
+
+          <h3>
+            {{ documentation.resource }} API
+          </h3>
+
+          <p>
+            {{ documentation.description }}
+          </p>
+
+          <div class="endpoints">
+
+            @for (
+              endpoint of documentation.endpoints;
+              track endpoint.method + endpoint.path
+              ) {
+
+              <article class="endpoint-card">
+
+                <div class="endpoint-heading">
+
+                  <span class="method">
+                    {{ endpoint.method }}
+                  </span>
+
+                  <code>
+                    {{ endpoint.path }}
+                  </code>
+
+                </div>
+
+                <p>
+                  {{ endpoint.description }}
+                </p>
+
+                @if (endpoint.requestExample) {
+
+                  <h4>Request example</h4>
+
+                  <pre>{{ endpoint.requestExample | json }}</pre>
+
+                }
+
+                @if (endpoint.responseExample) {
+
+                  <h4>Response example</h4>
+
+                  <pre>{{ endpoint.responseExample | json }}</pre>
+
+                }
+
+              </article>
+
+            }
+
+          </div>
+
+        </div>
+
+      } @else {
+
+        <div class="empty-state">
+          Select an API resource to view its documentation.
+        </div>
+
+      }
+
+    </section>
+
+  </div>
+
+</section>
