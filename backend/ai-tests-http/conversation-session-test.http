@@ -1,0 +1,6 @@
+POST http://localhost:3000/api/ai/chat
+Content-Type: application/json
+
+{
+  "message": "Analyze DEV-101 and briefly tell me what this ticket is about."
+}

@@ -2,10 +2,18 @@ import { Router } from 'express';
 
 import { askAssistant } from '../ai/services/ai.service.js';
 
+import {
+    clearSession,
+    getOrCreateSession
+} from '../ai/services/session.service.js';
+
 const router = Router();
 
 router.post('/chat', async (req, res) => {
-    const { message } = req.body;
+    const {
+        message,
+        conversationId
+    } = req.body;
 
     if (
         typeof message !== 'string' ||
@@ -19,10 +27,20 @@ router.post('/chat', async (req, res) => {
     }
 
     try {
-        const answer = await askAssistant(message);
+        const conversation = getOrCreateSession(
+            typeof conversationId === 'string'
+                ? conversationId
+                : undefined
+        );
+
+        const answer = await askAssistant(
+            message,
+            conversation.session
+        );
 
         res.json({
-            answer
+            answer,
+            conversationId: conversation.conversationId
         });
     } catch (error) {
         console.error('AI request failed:', error);
@@ -32,5 +50,24 @@ router.post('/chat', async (req, res) => {
         });
     }
 });
+
+router.delete(
+    '/conversations/:conversationId',
+    async (req, res) => {
+        const cleared = await clearSession(
+            req.params.conversationId
+        );
+
+        if (!cleared) {
+            res.status(404).json({
+                message: 'Conversation was not found.'
+            });
+
+            return;
+        }
+
+        res.status(204).send();
+    }
+);
 
 export default router;

@@ -9,13 +9,13 @@ export const getApiDocumentationTool = tool({
     name: 'get_api_documentation',
 
     description:
-        'Get internal API documentation for a resource such as Locations, Events, or Users. Use this tool when implementation requires information about internal API endpoints.',
+        'Retrieve internal API documentation when the exact API resource name is known.',
 
     parameters: z.object({
         resource: z
             .string()
             .describe(
-                'The API resource name, for example Locations, Events, or Users'
+                'The exact API resource name.'
             )
     }),
 

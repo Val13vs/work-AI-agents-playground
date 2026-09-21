@@ -7,12 +7,12 @@ export const getTicketTool = tool({
     name: 'get_ticket',
 
     description:
-        'Get information about an internal development ticket by its ID. Use this tool when the user asks about a ticket such as DEV-101.',
+        'Retrieve an internal development ticket when a specific ticket ID is known.',
 
     parameters: z.object({
         ticketId: z
             .string()
-            .describe('The development ticket ID, for example DEV-101')
+            .describe('The exact development ticket ID')
     }),
 
     execute: async ({ ticketId }) => {

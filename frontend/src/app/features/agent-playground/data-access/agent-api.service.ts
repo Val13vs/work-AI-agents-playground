@@ -16,14 +16,28 @@ export class AgentApiService {
   private readonly baseUrl =
     'http://localhost:3000/api/ai';
 
-  chat(message: string): Observable<AiChatResponse> {
+  chat(
+    message: string,
+    conversationId?: string
+  ): Observable<AiChatResponse> {
+
     const request: AiChatRequest = {
-      message
+      message,
+      conversationId
     };
 
     return this.http.post<AiChatResponse>(
       `${this.baseUrl}/chat`,
       request
+    );
+  }
+
+  clearConversation(
+    conversationId: string
+  ): Observable<void> {
+
+    return this.http.delete<void>(
+      `${this.baseUrl}/conversations/${conversationId}`
     );
   }
 }

@@ -1,63 +1,122 @@
 <section class="agent-page">
 
   <div class="page-header">
-    <p class="eyebrow">AI Agents Lab</p>
+    <div>
+      <p class="eyebrow">
+        AI Agents Lab
+      </p>
 
-    <h1>AI Playground</h1>
+      <h1>AI Playground</h1>
 
-    <p>
-      Talk directly to our first Developer Assistant.
-      At this stage the agent has no tools and no access
-      to the mock internal systems.
-    </p>
+      <p>
+        Talk to the Coordinator Agent.
+        The conversation keeps its context
+        between messages.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="secondary-button"
+      [disabled]="loading()"
+      (click)="newConversation()"
+    >
+      New chat
+    </button>
   </div>
 
-  <div class="playground-card">
+  <section class="chat">
 
-    <label for="message">
-      Ask the Developer Assistant
-    </label>
+    <div class="messages">
 
-    <textarea
-      id="message"
-      rows="6"
-      placeholder="Example: Explain Angular dependency injection in two sentences."
-      [value]="message()"
-      (input)="updateMessage($event)"
-    ></textarea>
+      @for (
+        chatMessage of messages();
+        track $index
+        ) {
 
-    <div class="actions">
+        <article
+          class="message"
+          [class.user-message]="
+            chatMessage.role === 'user'
+          "
+          [class.assistant-message]="
+            chatMessage.role === 'assistant'
+          "
+        >
+
+          <strong>
+            @if (chatMessage.role === 'user') {
+              You
+            } @else {
+              Assistant
+            }
+          </strong>
+
+          <p>
+            {{ chatMessage.content }}
+          </p>
+
+        </article>
+
+      } @empty {
+
+        <div class="empty-state">
+
+          <h2>Start a conversation</h2>
+
+          <p>
+            Try asking the agent to analyze
+            DEV-101.
+          </p>
+
+        </div>
+
+      }
+
+      @if (loading()) {
+
+        <article
+          class="message assistant-message loading-message"
+        >
+          <strong>Assistant</strong>
+          <p>Thinking...</p>
+        </article>
+
+      }
+
+    </div>
+
+    @if (error()) {
+
+      <div class="error-message">
+        {{ error() }}
+      </div>
+
+    }
+
+    <div class="composer">
+
+      <textarea
+        rows="4"
+        placeholder="Ask the agent something..."
+        [value]="message()"
+        [disabled]="loading()"
+        (input)="updateMessage($event)"
+      ></textarea>
+
       <button
         type="button"
-        [disabled]="!message().trim() || loading()"
+        [disabled]="
+          !message().trim() ||
+          loading()
+        "
         (click)="sendMessage()"
       >
-        @if (loading()) {
-          Thinking...
-        } @else {
-          Send message
-        }
+        Send
       </button>
+
     </div>
 
-  </div>
-
-  @if (error()) {
-    <div class="error-message">
-      {{ error() }}
-    </div>
-  }
-
-  @if (answer()) {
-
-    <section class="answer-card">
-
-      <h2>Assistant</h2>
-
-      <p>{{ answer() }}</p>
-
-    </section>
-
-  }
+  </section>
 
 </section>

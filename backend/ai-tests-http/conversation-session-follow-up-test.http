@@ -1,0 +1,7 @@
+POST http://localhost:3000/api/ai/chat
+Content-Type: application/json
+
+{
+  "message": "Which API does it use?",
+  "conversationId": "ТУК_КОПИРАШ_ID"
+}
