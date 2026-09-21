@@ -1,230 +1,679 @@
-<section class="agent-page">
+<section class="workspace">
 
-  <div class="page-header">
-    <div>
-      <p class="eyebrow">
-        AI Agents Lab
-      </p>
+  <header class="workspace-header">
+    <div class="brand-section">
 
-      <h1>AI Playground</h1>
-
-      <p>
-        Talk to the Coordinator Agent.
-        Conversations preserve context
-        between messages.
-      </p>
-    </div>
-
-    <button
-      type="button"
-      class="secondary-button"
-      [disabled]="
-        loading() ||
-        approvalLoading()
-      "
-      (click)="newConversation()"
-    >
-      New chat
-    </button>
-  </div>
-
-  <section class="chat">
-
-    <div class="messages">
-
-      @for (
-        chatMessage of messages();
-        track $index
-        ) {
-
-        <article
-          class="message"
-          [class.user-message]="
-            chatMessage.role === 'user'
-          "
-          [class.assistant-message]="
-            chatMessage.role === 'assistant'
-          "
-        >
-
-          <strong>
-            @if (
-              chatMessage.role === 'user'
-              ) {
-              You
-            } @else {
-              Assistant
-            }
-          </strong>
-
-          <p>
-            {{ chatMessage.content }}
-          </p>
-
-        </article>
-
-      } @empty {
-
-        @if (!pendingApproval()) {
-          <div class="empty-state">
-            <h2>
-              Start a conversation
-            </h2>
-
-            <p>
-              Try asking the agent to
-              analyze DEV-101.
-            </p>
-          </div>
-        }
-
-      }
-
-      @if (loading()) {
-
-        <article
-          class="
-            message
-            assistant-message
-            loading-message
-          "
-        >
-          <strong>
-            Assistant
-          </strong>
-
-          <p>
-            Thinking...
-          </p>
-        </article>
-
-      }
-
-      @if (
-        pendingApproval();
-        as approval
-        ) {
-
-        <article class="approval-card">
-
-          <div class="approval-header">
-            <div>
-              <span
-                class="approval-badge"
-              >
-                Approval required
-              </span>
-
-              <h3>
-                Agent wants to perform
-                an action
-              </h3>
-            </div>
-          </div>
-
-          <div class="approval-details">
-
-            <div class="approval-field">
-              <span>
-                Tool
-              </span>
-
-              <strong>
-                {{ approval.toolName }}
-              </strong>
-            </div>
-
-            <div class="approval-field">
-              <span>
-                Arguments
-              </span>
-
-              <pre>{{
-                  approval.arguments
-                }}</pre>
-            </div>
-
-          </div>
-
-          <div class="approval-actions">
-
-            <button
-              type="button"
-              class="reject-button"
-              [disabled]="
-                approvalLoading()
-              "
-              (click)="reject()"
-            >
-              Reject
-            </button>
-
-            <button
-              type="button"
-              class="approve-button"
-              [disabled]="
-                approvalLoading()
-              "
-              (click)="approve()"
-            >
-              @if (
-                approvalLoading()
-                ) {
-                Processing...
-              } @else {
-                Approve
-              }
-            </button>
-
-          </div>
-
-        </article>
-
-      }
-
-    </div>
-
-    @if (error()) {
-
-      <div class="error-message">
-        {{ error() }}
+      <div class="brand-icon">
+        AI
       </div>
 
-    }
+      <div>
+        <div class="header-meta">
+          <span>AI Agents Lab</span>
 
-    <div class="composer">
+          <span class="header-separator">
+            /
+          </span>
 
-      <textarea
-        rows="4"
-        placeholder="
-          Ask the agent something...
-        "
-        [value]="message()"
-        [disabled]="
-          loading() ||
-          approvalLoading() ||
-          !!pendingApproval()
-        "
-        (input)="
-          updateMessage($event)
-        "
-      ></textarea>
+          <span>
+            Developer Workspace
+          </span>
+        </div>
+
+        <h1>
+          Developer Agent
+        </h1>
+
+        <p>
+          Explore tickets, internal APIs and
+          agent-assisted implementation workflows.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="header-actions">
+
+      <div class="connection-status">
+        <span class="status-dot"></span>
+        Connected
+      </div>
 
       <button
         type="button"
+        class="new-chat-button"
         [disabled]="
-          !message().trim() ||
           loading() ||
-          approvalLoading() ||
-          !!pendingApproval()
+          approvalLoading()
         "
-        (click)="sendMessage()"
+        (click)="newConversation()"
       >
-        Send
+        <span class="button-icon">
+          +
+        </span>
+
+        New chat
       </button>
 
     </div>
+  </header>
 
-  </section>
+
+  <div class="workspace-content">
+
+    <!-- LEFT PANEL -->
+
+    <aside class="agent-sidebar">
+
+      <div class="agent-card">
+
+        <div class="agent-avatar">
+          <span>CA</span>
+        </div>
+
+        <div class="agent-info">
+
+          <span class="section-label">
+            Active agent
+          </span>
+
+          <h2>
+            Coordinator Agent
+          </h2>
+
+          <div class="agent-state">
+            <span class="status-dot"></span>
+            Ready
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="sidebar-section">
+
+        <span class="section-label">
+          Capabilities
+        </span>
+
+        <div class="capability-list">
+
+          <div class="capability-item">
+            <div class="capability-icon">
+              T
+            </div>
+
+            <div>
+              <strong>
+                Ticket Access
+              </strong>
+
+              <span>
+                Internal development tickets
+              </span>
+            </div>
+          </div>
+
+
+          <div class="capability-item">
+            <div class="capability-icon">
+              API
+            </div>
+
+            <div>
+              <strong>
+                API Documentation
+              </strong>
+
+              <span>
+                Internal endpoint discovery
+              </span>
+            </div>
+          </div>
+
+
+          <div class="capability-item">
+            <div class="capability-icon">
+              FE
+            </div>
+
+            <div>
+              <strong>
+                Frontend Specialist
+              </strong>
+
+              <span>
+                Angular implementation plans
+              </span>
+            </div>
+          </div>
+
+
+          <div class="capability-item">
+            <div class="capability-icon">
+              ✓
+            </div>
+
+            <div>
+              <strong>
+                Human Approval
+              </strong>
+
+              <span>
+                Protected write operations
+              </span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="sidebar-section">
+
+        <span class="section-label">
+          Conversation
+        </span>
+
+        <div class="conversation-info">
+
+          <div class="conversation-row">
+            <span>Status</span>
+
+            <strong class="conversation-active">
+              Active
+            </strong>
+          </div>
+
+
+          <div class="conversation-row">
+            <span>Messages</span>
+
+            <strong>
+              {{ messages().length }}
+            </strong>
+          </div>
+
+
+          <div class="conversation-id">
+
+            <span>
+              Session ID
+            </span>
+
+            <code>
+              @if (conversationId()) {
+                {{ conversationId() }}
+              } @else {
+                Not started
+              }
+            </code>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="sidebar-tip">
+
+        <div class="tip-icon">
+          ✦
+        </div>
+
+        <div>
+          <strong>
+            Agent tip
+          </strong>
+
+          <p>
+            Try asking for a ticket and then
+            continue with follow-up questions.
+          </p>
+        </div>
+
+      </div>
+
+    </aside>
+
+
+    <!-- MAIN CHAT -->
+
+    <main class="chat-panel">
+
+      <div class="chat-toolbar">
+
+        <div>
+
+          <span class="section-label">
+            Conversation
+          </span>
+
+          <h2>
+            Agent Playground
+          </h2>
+
+        </div>
+
+        <div class="toolbar-badges">
+
+          <span class="toolbar-badge">
+            Memory enabled
+          </span>
+
+          <span class="toolbar-badge accent">
+            Tools enabled
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="messages">
+
+        @for (
+          chatMessage of messages();
+          track $index
+          ) {
+
+          @if (
+            chatMessage.role === 'user'
+            ) {
+
+            <div class="message-row user-row">
+
+              <div class="message-content">
+
+                <span class="message-author">
+                  You
+                </span>
+
+                <article class="message-bubble user-bubble">
+
+                  <p>
+                    {{ chatMessage.content }}
+                  </p>
+
+                </article>
+
+              </div>
+
+              <div class="message-avatar user-avatar">
+                YOU
+              </div>
+
+            </div>
+
+          } @else {
+
+            <div class="message-row assistant-row">
+
+              <div class="message-avatar assistant-avatar">
+                AI
+              </div>
+
+              <div class="message-content">
+
+                <div class="message-author-row">
+
+                  <span class="message-author">
+                    Coordinator Agent
+                  </span>
+
+                  <span class="agent-badge">
+                    AI
+                  </span>
+
+                </div>
+
+                <article class="message-bubble assistant-bubble">
+
+                  <p>
+                    {{ chatMessage.content }}
+                  </p>
+
+                </article>
+
+              </div>
+
+            </div>
+
+          }
+
+        } @empty {
+
+          @if (!pendingApproval()) {
+
+            <div class="welcome-state">
+
+              <div class="welcome-icon">
+                ✦
+              </div>
+
+              <h2>
+                What can I help you build?
+              </h2>
+
+              <p>
+                Ask the Coordinator Agent about
+                internal tickets, APIs or frontend
+                implementation tasks.
+              </p>
+
+
+              <div class="suggestion-grid">
+
+                <button
+                  type="button"
+                  class="suggestion-card"
+                  (click)="setPrompt(
+                    'Analyze DEV-101 and explain what needs to be implemented.'
+                  )"
+                >
+                  <span class="suggestion-icon">
+                    T
+                  </span>
+
+                  <strong>
+                    Analyze a ticket
+                  </strong>
+
+                  <span>
+                    Review requirements and related APIs
+                  </span>
+                </button>
+
+
+                <button
+                  type="button"
+                  class="suggestion-card"
+                  (click)="setPrompt(
+                    'What endpoints are available for Locations?'
+                  )"
+                >
+                  <span class="suggestion-icon">
+                    API
+                  </span>
+
+                  <strong>
+                    Explore an API
+                  </strong>
+
+                  <span>
+                    Inspect internal API documentation
+                  </span>
+                </button>
+
+
+                <button
+                  type="button"
+                  class="suggestion-card"
+                  (click)="setPrompt(
+                    'Analyze DEV-101 and create an Angular implementation plan.'
+                  )"
+                >
+                  <span class="suggestion-icon">
+                    FE
+                  </span>
+
+                  <strong>
+                    Frontend plan
+                  </strong>
+
+                  <span>
+                    Delegate to the frontend specialist
+                  </span>
+                </button>
+
+              </div>
+
+            </div>
+
+          }
+
+        }
+
+
+        @if (loading()) {
+
+          <div class="message-row assistant-row">
+
+            <div class="message-avatar assistant-avatar">
+              AI
+            </div>
+
+            <div class="message-content">
+
+              <span class="message-author">
+                Coordinator Agent
+              </span>
+
+              <article class="message-bubble assistant-bubble thinking-bubble">
+
+                <div class="thinking-dots">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+
+                <span>
+                  Agent is thinking
+                </span>
+
+              </article>
+
+            </div>
+
+          </div>
+
+        }
+
+
+        @if (
+          pendingApproval();
+          as approval
+          ) {
+
+          <article class="approval-card">
+
+            <div class="approval-accent"></div>
+
+            <div class="approval-main">
+
+              <div class="approval-header">
+
+                <div class="approval-icon">
+                  !
+                </div>
+
+                <div>
+
+                  <span class="approval-label">
+                    Human approval required
+                  </span>
+
+                  <h3>
+                    The agent wants to perform an action
+                  </h3>
+
+                  <p>
+                    Review the requested operation before
+                    allowing it to execute.
+                  </p>
+
+                </div>
+
+              </div>
+
+
+              <div class="approval-information">
+
+                <div class="approval-info-card">
+
+                  <span>
+                    Tool
+                  </span>
+
+                  <strong>
+                    {{ approval.toolName }}
+                  </strong>
+
+                </div>
+
+
+                <div class="approval-info-card arguments-card">
+
+                  <span>
+                    Arguments
+                  </span>
+
+                  <pre>{{ approval.arguments }}</pre>
+
+                </div>
+
+              </div>
+
+
+              <div class="approval-warning">
+
+                <span>
+                  ⚠
+                </span>
+
+                <p>
+                  This operation may modify application
+                  data and requires your confirmation.
+                </p>
+
+              </div>
+
+
+              <div class="approval-actions">
+
+                <button
+                  type="button"
+                  class="reject-button"
+                  [disabled]="approvalLoading()"
+                  (click)="reject()"
+                >
+                  Reject
+                </button>
+
+                <button
+                  type="button"
+                  class="approve-button"
+                  [disabled]="approvalLoading()"
+                  (click)="approve()"
+                >
+
+                  @if (approvalLoading()) {
+
+                    Processing...
+
+                  } @else {
+
+                    Approve action
+
+                  }
+
+                </button>
+
+              </div>
+
+            </div>
+
+          </article>
+
+        }
+
+      </div>
+
+
+      @if (error()) {
+
+        <div class="error-message">
+
+          <span class="error-icon">
+            !
+          </span>
+
+          <div>
+
+            <strong>
+              Something went wrong
+            </strong>
+
+            <span>
+              {{ error() }}
+            </span>
+
+          </div>
+
+        </div>
+
+      }
+
+
+      <div class="composer-wrapper">
+
+        <div class="composer">
+
+          <textarea
+            rows="1"
+            placeholder="Ask the Coordinator Agent..."
+            [value]="message()"
+            [disabled]="
+              loading() ||
+              approvalLoading() ||
+              !!pendingApproval()
+            "
+            (input)="updateMessage($event)"
+          ></textarea>
+
+
+          <button
+            type="button"
+            class="send-button"
+            [disabled]="
+              !message().trim() ||
+              loading() ||
+              approvalLoading() ||
+              !!pendingApproval()
+            "
+            (click)="sendMessage()"
+          >
+            <span>
+              Send
+            </span>
+
+            <span class="send-arrow">
+              →
+            </span>
+          </button>
+
+        </div>
+
+
+        <div class="composer-footer">
+
+          <span>
+            AI responses may require human verification.
+          </span>
+
+          <span>
+            Coordinator Agent · Tools · Memory
+          </span>
+
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
 
 </section>

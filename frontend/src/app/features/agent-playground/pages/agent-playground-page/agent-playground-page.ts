@@ -271,4 +271,18 @@ export class AgentPlaygroundPage {
 
     this.approvalLoading.set(false);
   }
+
+  setPrompt(
+    prompt: string
+  ): void {
+    if (
+      this.loading() ||
+      this.approvalLoading() ||
+      this.pendingApproval()
+    ) {
+      return;
+    }
+
+    this.message.set(prompt);
+  }
 }

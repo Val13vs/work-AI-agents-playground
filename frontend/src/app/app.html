@@ -1,31 +1,197 @@
 <div class="app-shell">
 
   <aside class="sidebar">
-    <div class="brand">
-      <strong>AgentLab</strong>
-      <span>Developer Portal</span>
+
+    <div class="sidebar-background-glow sidebar-background-glow--top">
     </div>
 
-    <nav>
-      <a routerLink="/tickets"
-         routerLinkActive="active">
-        Tickets
+    <div class="sidebar-background-glow sidebar-background-glow--bottom">
+    </div>
+
+
+    <!-- BRAND -->
+
+    <div class="sidebar-brand">
+
+      <div class="sidebar-logo">
+        <span>AI</span>
+      </div>
+
+      <div class="sidebar-brand-text">
+        <strong>
+          AI Agents Lab
+        </strong>
+
+        <span>
+          Developer Workspace
+        </span>
+      </div>
+
+    </div>
+
+
+    <!-- NAVIGATION -->
+
+    <nav class="sidebar-nav">
+
+      <div class="nav-section-label">
+        Workspace
+      </div>
+
+
+      <a
+        routerLink="/tickets"
+        routerLinkActive="active"
+        class="nav-item"
+      >
+        <div class="nav-icon nav-icon--tickets">
+          T
+        </div>
+
+        <div class="nav-content">
+          <strong>
+            Tickets
+          </strong>
+
+          <span>
+            Development tasks
+          </span>
+        </div>
+
+        <span class="nav-arrow">
+          ›
+        </span>
       </a>
 
-      <a routerLink="/api-docs"
-         routerLinkActive="active">
-         API Documentation
+
+      <a
+        routerLink="/api-docs"
+        routerLinkActive="active"
+        class="nav-item"
+      >
+        <div class="nav-icon nav-icon--api">
+          API
+        </div>
+
+        <div class="nav-content">
+          <strong>
+            API Documentation
+          </strong>
+
+          <span>
+            Internal resources
+          </span>
+        </div>
+
+        <span class="nav-arrow">
+          ›
+        </span>
       </a>
 
-      <a routerLink="/agent"
-         routerLinkActive="active">
-        AI Playground
+
+      <a
+        routerLink="/agent"
+        routerLinkActive="active"
+        class="nav-item"
+      >
+        <div class="nav-icon nav-icon--agent">
+          ✦
+        </div>
+
+        <div class="nav-content">
+          <strong>
+            AI Playground
+          </strong>
+
+          <span>
+            Agent workspace
+          </span>
+        </div>
+
+        <span class="nav-arrow">
+          ›
+        </span>
       </a>
+
     </nav>
+
+
+    <!-- PROJECT STATUS -->
+
+    <div class="sidebar-project">
+
+      <div class="project-header">
+
+        <span class="project-label">
+          Project
+        </span>
+
+        <span class="project-status">
+          <span class="project-status-dot"></span>
+          Active
+        </span>
+
+      </div>
+
+
+      <div class="project-name">
+        AI Agents PoC
+      </div>
+
+      <p>
+        Internal playground for tools,
+        sub-agents, sessions and approval workflows.
+      </p>
+
+
+      <div class="project-features">
+
+        <span>
+          Tools
+        </span>
+
+        <span>
+          Memory
+        </span>
+
+        <span>
+          HITL
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <div class="sidebar-footer">
+
+      <div class="sidebar-footer-icon">
+        ✦
+      </div>
+
+      <div class="sidebar-footer-content">
+        <strong>
+          Agents Playground
+        </strong>
+
+        <span>
+          Internal PoC environment
+        </span>
+      </div>
+
+    </div>
+
   </aside>
 
-  <main class="content">
+
+  <!-- PAGE CONTENT -->
+
+  <main class="app-content">
+
     <router-outlet />
+
   </main>
 
 </div>
