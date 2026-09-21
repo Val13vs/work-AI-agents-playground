@@ -12,6 +12,10 @@ import {
     frontendSpecialistAgent
 } from './specialists/frontend-specialist.agent.js';
 
+import {
+    updateTicketStatusTool
+} from '../tools/update-ticket-status.tool.js';
+
 const frontendSpecialistTool =
     frontendSpecialistAgent.asTool({
         toolName: 'frontend_specialist',
@@ -60,6 +64,17 @@ export const assistantAgent = new Agent({
          Use this for frontend implementation analysis after
          the required ticket and API information has been collected.
     
+      4. update_ticket_status
+         Use this tool only when the user explicitly asks
+         to change the status of a specific development ticket.
+         Never change ticket status based on your own judgement.
+         The exact ticket ID and requested target status must
+         be known before using this tool.
+         Never claim that a ticket was updated unless the
+         update tool actually completed successfully.
+         If the user only asks what a ticket's status is, use get_ticket.
+         Do not use update_ticket_status for read-only questions.
+         
       For frontend implementation requests involving a ticket:
     
       1. Retrieve the ticket.
@@ -75,6 +90,7 @@ export const assistantAgent = new Agent({
     tools: [
         getTicketTool,
         getApiDocumentationTool,
-        frontendSpecialistTool
+        frontendSpecialistTool,
+        updateTicketStatusTool
     ]
 });

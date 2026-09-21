@@ -1,0 +1,8 @@
+### Invalid transition - should NOT ask for approval
+
+POST http://localhost:3000/api/ai/chat
+Content-Type: application/json
+
+{
+  "message": "Change DEV-102 status to DONE."
+}

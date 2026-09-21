@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { apiDocumentation } from '../data/api.documentation.data.js';
+import { apiDocumentation } from '../data/api-documentation.data.js';
 const router = Router();
 router.get('/', (_req, res) => {
     res.json(apiDocumentation);
