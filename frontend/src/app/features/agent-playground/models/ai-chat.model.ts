@@ -3,10 +3,33 @@ export interface AiChatRequest {
   conversationId?: string;
 }
 
-export interface AiChatResponse {
+export interface AiCompletedResponse {
+  status: 'completed';
   answer: string;
-  conversationId: string;
 }
+
+export interface AiApprovalRequiredResponse {
+  status: 'approval_required';
+  approvalId: string;
+  toolName: string;
+  arguments: string;
+}
+
+export type AiResultResponse =
+  | AiCompletedResponse
+  | AiApprovalRequiredResponse;
+
+export type AiChatResponse =
+  AiResultResponse & {
+  conversationId: string;
+};
+
+export interface AiApprovalDecisionRequest {
+  approved: boolean;
+}
+
+export type AiApprovalDecisionResponse =
+  AiResultResponse;
 
 export type ChatMessageRole =
   | 'user'
@@ -15,4 +38,10 @@ export type ChatMessageRole =
 export interface ChatMessage {
   role: ChatMessageRole;
   content: string;
+}
+
+export interface PendingApproval {
+  approvalId: string;
+  toolName: string;
+  arguments: string;
 }

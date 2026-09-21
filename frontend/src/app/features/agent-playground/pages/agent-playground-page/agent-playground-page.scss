@@ -120,3 +120,81 @@ button {
     opacity: 0.5;
   }
 }
+
+.approval-card {
+  align-self: flex-start;
+  width: min(620px, 90%);
+  padding: 20px;
+  border: 1px solid #d6a84b;
+  border-radius: 12px;
+}
+
+.approval-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+
+  h3 {
+    margin: 10px 0 0;
+  }
+}
+
+.approval-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border: 1px solid;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.approval-details {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.approval-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  > span {
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0.6;
+    text-transform: uppercase;
+  }
+
+  pre {
+    margin: 0;
+    padding: 12px;
+    overflow-x: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+}
+
+.approval-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+
+  button {
+    padding: 10px 18px;
+  }
+}
+
+.reject-button {
+  border: 1px solid;
+  background: transparent;
+}
+
+.approve-button {
+  font-weight: 600;
+}

@@ -10,7 +10,7 @@
 
       <p>
         Talk to the Coordinator Agent.
-        The conversation keeps its context
+        Conversations preserve context
         between messages.
       </p>
     </div>
@@ -18,7 +18,10 @@
     <button
       type="button"
       class="secondary-button"
-      [disabled]="loading()"
+      [disabled]="
+        loading() ||
+        approvalLoading()
+      "
       (click)="newConversation()"
     >
       New chat
@@ -45,7 +48,9 @@
         >
 
           <strong>
-            @if (chatMessage.role === 'user') {
+            @if (
+              chatMessage.role === 'user'
+              ) {
               You
             } @else {
               Assistant
@@ -60,26 +65,119 @@
 
       } @empty {
 
-        <div class="empty-state">
+        @if (!pendingApproval()) {
+          <div class="empty-state">
+            <h2>
+              Start a conversation
+            </h2>
 
-          <h2>Start a conversation</h2>
-
-          <p>
-            Try asking the agent to analyze
-            DEV-101.
-          </p>
-
-        </div>
+            <p>
+              Try asking the agent to
+              analyze DEV-101.
+            </p>
+          </div>
+        }
 
       }
 
       @if (loading()) {
 
         <article
-          class="message assistant-message loading-message"
+          class="
+            message
+            assistant-message
+            loading-message
+          "
         >
-          <strong>Assistant</strong>
-          <p>Thinking...</p>
+          <strong>
+            Assistant
+          </strong>
+
+          <p>
+            Thinking...
+          </p>
+        </article>
+
+      }
+
+      @if (
+        pendingApproval();
+        as approval
+        ) {
+
+        <article class="approval-card">
+
+          <div class="approval-header">
+            <div>
+              <span
+                class="approval-badge"
+              >
+                Approval required
+              </span>
+
+              <h3>
+                Agent wants to perform
+                an action
+              </h3>
+            </div>
+          </div>
+
+          <div class="approval-details">
+
+            <div class="approval-field">
+              <span>
+                Tool
+              </span>
+
+              <strong>
+                {{ approval.toolName }}
+              </strong>
+            </div>
+
+            <div class="approval-field">
+              <span>
+                Arguments
+              </span>
+
+              <pre>{{
+                  approval.arguments
+                }}</pre>
+            </div>
+
+          </div>
+
+          <div class="approval-actions">
+
+            <button
+              type="button"
+              class="reject-button"
+              [disabled]="
+                approvalLoading()
+              "
+              (click)="reject()"
+            >
+              Reject
+            </button>
+
+            <button
+              type="button"
+              class="approve-button"
+              [disabled]="
+                approvalLoading()
+              "
+              (click)="approve()"
+            >
+              @if (
+                approvalLoading()
+                ) {
+                Processing...
+              } @else {
+                Approve
+              }
+            </button>
+
+          </div>
+
         </article>
 
       }
@@ -98,17 +196,27 @@
 
       <textarea
         rows="4"
-        placeholder="Ask the agent something..."
+        placeholder="
+          Ask the agent something...
+        "
         [value]="message()"
-        [disabled]="loading()"
-        (input)="updateMessage($event)"
+        [disabled]="
+          loading() ||
+          approvalLoading() ||
+          !!pendingApproval()
+        "
+        (input)="
+          updateMessage($event)
+        "
       ></textarea>
 
       <button
         type="button"
         [disabled]="
           !message().trim() ||
-          loading()
+          loading() ||
+          approvalLoading() ||
+          !!pendingApproval()
         "
         (click)="sendMessage()"
       >

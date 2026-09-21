@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import {
+  AiApprovalDecisionRequest,
+  AiApprovalDecisionResponse,
   AiChatRequest,
   AiChatResponse
 } from '../models/ai-chat.model';
@@ -20,7 +22,6 @@ export class AgentApiService {
     message: string,
     conversationId?: string
   ): Observable<AiChatResponse> {
-
     const request: AiChatRequest = {
       message,
       conversationId
@@ -32,10 +33,23 @@ export class AgentApiService {
     );
   }
 
+  resolveApproval(
+    approvalId: string,
+    approved: boolean
+  ): Observable<AiApprovalDecisionResponse> {
+    const request: AiApprovalDecisionRequest = {
+      approved
+    };
+
+    return this.http.post<AiApprovalDecisionResponse>(
+      `${this.baseUrl}/approvals/${approvalId}`,
+      request
+    );
+  }
+
   clearConversation(
     conversationId: string
   ): Observable<void> {
-
     return this.http.delete<void>(
       `${this.baseUrl}/conversations/${conversationId}`
     );
