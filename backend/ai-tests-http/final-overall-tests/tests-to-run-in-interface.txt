@@ -1,0 +1,553 @@
+FINAL FUNCTIONAL TESTS — AI AGENTS LAB
+
+
+Преди тестовете:
+    Стартирайте Backend и Frontend.
+
+    Backend:
+        npm run dev
+
+    Frontend:
+        npm start
+
+    Препоръчително е Backend-ът да бъде рестартиран преди тестовете,
+    за да се върнат mock данните в първоначалното им състояние.
+
+    DEV-102 трябва да бъде със статус:
+        OPEN
+
+
+
+============================================================
+Test 1 — Agent без tools
+============================================================
+
+В интерфейса изпратете:
+    Explain Angular dependency injection in two sentences.
+
+Очакваме:
+    Нормален AI отговор, който обяснява Angular Dependency Injection
+    в две изречения.
+
+    Agent-ът не трябва да използва нито един вътрешен tool.
+
+В backend terminal-а не трябва да се вижда:
+    [TOOL] get_ticket...
+    [TOOL] get_api_documentation...
+    [TOOL] update_ticket_status...
+
+Това доказва:
+    не всеки prompt
+    ↓
+    трябва да използва tool
+    ↓
+    Agent-ът може сам да прецени кога tool не е необходим
+
+
+
+============================================================
+Test 2 — Ticket retrieval чрез get_ticket
+============================================================
+
+Препоръчително:
+    Стартирайте New chat.
+
+В интерфейса изпратете:
+    What are the requirements of DEV-101?
+
+Очакваме:
+    Agent-ът да върне информацията за DEV-101.
+
+    Отговорът трябва да съдържа реалните requirements
+    на DEV-101 от mock ticket данните.
+
+    Agent-ът не трябва да измисля допълнителни вътрешни
+    изисквания, които не съществуват в ticket-а.
+
+В backend terminal-а трябва да се вижда:
+    [TOOL] get_ticket called with ticketId=DEV-101
+
+Не е необходимо да се извиква:
+    get_api_documentation
+    update_ticket_status
+
+Това доказва:
+    User пита за конкретен вътрешен ticket
+    ↓
+    Coordinator Agent разпознава нуждата от вътрешни данни
+    ↓
+    извиква get_ticket
+    ↓
+    използва реалните данни вместо да ги измисля
+
+
+
+============================================================
+Test 3 — API Documentation чрез get_api_documentation
+============================================================
+
+Препоръчително:
+    Стартирайте New chat.
+
+В интерфейса изпратете:
+    What endpoints are available in the Locations API?
+
+Очакваме:
+    Agent-ът да върне endpoint-ите, описани в
+    Locations API документацията.
+
+    Отговорът трябва да бъде базиран на вътрешната mock
+    API документация.
+
+В backend terminal-а трябва да се вижда:
+    [TOOL] get_api_documentation called with resource=Locations
+
+Не трябва да е необходимо:
+    [TOOL] get_ticket...
+
+    защото потребителят директно е посочил API resource-а.
+
+Това доказва:
+    User пита за вътрешно API
+    ↓
+    Agent-ът избира правилния tool
+    ↓
+    get_api_documentation
+    ↓
+    връща реалната вътрешна документация
+
+
+
+============================================================
+Test 4 — Multi-step flow + Sub-Agent
+============================================================
+
+Препоръчително:
+    Стартирайте New chat.
+
+В интерфейса изпратете:
+    Analyze DEV-101 and give me a detailed Angular frontend implementation plan.
+
+Очакваме:
+    Agent-ът първо да намери DEV-101.
+
+    След това да установи:
+        relatedApi = Locations
+
+    След това да намери Locations API документацията.
+
+    Накрая да използва Frontend Specialist Agent
+    за изготвяне на Angular implementation plan.
+
+В backend terminal-а трябва да се вижда поне:
+    [TOOL] get_ticket called with ticketId=DEV-101
+    [TOOL] get_api_documentation called with resource=Locations
+
+Очакваният логически flow е:
+    Coordinator Agent
+    ↓
+    get_ticket
+    ↓
+    DEV-101
+    ↓
+    relatedApi = Locations
+    ↓
+    get_api_documentation
+    ↓
+    Locations API documentation
+    ↓
+    Frontend Specialist Agent
+    ↓
+    Coordinator Agent
+    ↓
+    Final response
+
+Крайният отговор трябва да съдържа практичен Angular план,
+например когато е приложимо:
+    components
+    services
+    models/interfaces
+    API calls
+    state handling
+    loading/error handling
+    pagination
+    filters
+
+Това доказва:
+    един user request
+    ↓
+    може да изисква няколко последователни действия
+    ↓
+    Coordinator Agent използва няколко tools
+    ↓
+    делегира специализиран reasoning на Sub-Agent
+    ↓
+    връща един финален резултат
+
+
+
+============================================================
+Test 5 — Conversation Session / Context
+============================================================
+
+Препоръчително:
+    Стартирайте New chat.
+
+Първо изпратете:
+    Tell me about DEV-102.
+
+Очакваме:
+    Agent-ът да намери DEV-102 чрез get_ticket
+    и да върне информация за него.
+
+След това, БЕЗ да натискате New chat, изпратете:
+    Which API does it use?
+
+Очакваме:
+    Agent-ът да разбере, че "it" се отнася за DEV-102.
+
+Очакваният отговор е:
+    Events API
+
+След това натиснете:
+    New chat
+
+В новия разговор изпратете директно:
+    Which API does it use?
+
+Очакваме:
+    Agent-ът да НЕ знае за кой ticket или feature
+    се отнася "it".
+
+    Трябва да поиска уточнение, например:
+        Which ticket or feature are you referring to?
+
+Не трябва произволно да отговаря:
+    Locations API
+    Events API
+    Users API
+
+или друг конкретен resource без наличен контекст.
+
+Това доказва:
+    Conversation A
+    ↓
+    има собствен Session context
+    ↓
+    follow-up въпросите използват историята
+
+    New chat
+    ↓
+    започва нов Session context
+    ↓
+    старият разговор не трябва да се помни
+
+
+
+============================================================
+Test 6 — Guardrail блокира невалиден status transition
+============================================================
+
+Преди теста проверете:
+    GET http://localhost:3000/api/tickets/DEV-102
+
+Очакван начален статус:
+    OPEN
+
+Препоръчително:
+    Стартирайте New chat.
+
+В интерфейса изпратете:
+    Change DEV-102 status to DONE.
+
+Според business rules:
+    OPEN → DONE
+    е НЕвалиден transition.
+
+Очакваме:
+    Guardrail-ът да блокира операцията.
+
+    Approval card НЕ трябва да се показва.
+
+    Ticket-ът НЕ трябва да бъде променен.
+
+В backend terminal-а не трябва да се вижда:
+    [TOOL] update_ticket_status executing: DEV-102 -> DONE
+
+След заявката проверете отново:
+    GET http://localhost:3000/api/tickets/DEV-102
+
+Очакваният статус остава:
+    OPEN
+
+Очакваният flow е:
+    User request
+    ↓
+    Coordinator Agent
+    ↓
+    update_ticket_status request
+    ↓
+    Input Guardrail
+    ↓
+    OPEN → DONE
+    ↓
+    BLOCKED
+    ↓
+    няма approval
+    ↓
+    няма execute()
+    ↓
+    няма промяна на данните
+
+Това доказва:
+    LLM не е финалната authority за business rules
+    ↓
+    Guardrail-ът програмно валидира операцията
+    ↓
+    невалидни действия не стигат до execution
+
+
+
+============================================================
+Test 7 — Human Approval / Reject
+============================================================
+
+Преди теста DEV-102 трябва да бъде:
+    OPEN
+
+Ако е необходимо:
+    рестартирайте Backend-а, за да се върнат mock данните.
+
+Препоръчително:
+    Стартирайте New chat.
+
+В интерфейса изпратете:
+    Change DEV-102 status to IN_PROGRESS.
+
+Този transition е валиден:
+    OPEN → IN_PROGRESS
+
+Очакваме:
+    Guardrail-ът да разреши операцията.
+
+    Tool-ът да НЕ се изпълни веднага.
+
+    В интерфейса трябва да се покаже Human Approval card.
+
+Approval card трябва да показва приблизително:
+    Human approval required
+
+    Tool:
+        update_ticket_status
+
+    Arguments:
+        ticketId = DEV-102
+        status = IN_PROGRESS
+
+    Actions:
+        Reject
+        Approve action
+
+ПРЕДИ да натиснете Reject проверете:
+    GET http://localhost:3000/api/tickets/DEV-102
+
+Очакваният статус все още е:
+    OPEN
+
+След това натиснете:
+    Reject
+
+Очакваме:
+    Agent workflow-ът да продължи след rejection-а.
+
+    Tool-ът НЕ трябва да се изпълни.
+
+В backend terminal-а не трябва да се вижда:
+    [TOOL] update_ticket_status executing: DEV-102 -> IN_PROGRESS
+
+Проверете отново:
+    GET http://localhost:3000/api/tickets/DEV-102
+
+Очакваният статус остава:
+    OPEN
+
+Очакваният flow е:
+    User request
+    ↓
+    valid Guardrail
+    ↓
+    approval_required
+    ↓
+    Human selects Reject
+    ↓
+    RunState.reject(...)
+    ↓
+    Agent run resumes
+    ↓
+    tool НЕ се изпълнява
+    ↓
+    данните не се променят
+
+Това доказва:
+    валидно действие
+    ≠
+    автоматично разрешено действие
+
+    Human-in-the-loop
+    ↓
+    човекът запазва крайния контрол
+
+
+
+============================================================
+Test 8 — Human Approval / Approve
+============================================================
+
+Преди теста DEV-102 трябва да бъде:
+    OPEN
+
+Ако е необходимо:
+    рестартирайте Backend-а.
+
+Препоръчително:
+    Стартирайте New chat.
+
+В интерфейса изпратете:
+    Change DEV-102 status to IN_PROGRESS.
+
+Очакваме:
+    Human Approval card.
+
+ПРЕДИ approval проверете:
+    GET http://localhost:3000/api/tickets/DEV-102
+
+Статусът трябва все още да бъде:
+    OPEN
+
+След това натиснете:
+    Approve action
+
+Очакваме:
+    Backend-ът да resume-не същия paused Agent RunState.
+
+    Guardrail-ът да бъде валиден.
+
+    update_ticket_status да бъде изпълнен.
+
+В backend terminal-а трябва да се вижда:
+    [TOOL] update_ticket_status executing: DEV-102 -> IN_PROGRESS
+
+Проверете:
+    GET http://localhost:3000/api/tickets/DEV-102
+
+Очакваният нов статус е:
+    IN_PROGRESS
+
+В интерфейса Agent-ът трябва да върне финален отговор,
+че операцията е извършена успешно.
+
+Очакваният flow е:
+    User request
+    ↓
+    update_ticket_status
+    ↓
+    Guardrail
+    ↓
+    VALID
+    ↓
+    Human Approval
+    ↓
+    Approve
+    ↓
+    RunState.approve(...)
+    ↓
+    resume Agent run
+    ↓
+    execute()
+    ↓
+    DEV-102 = IN_PROGRESS
+
+Това доказва:
+    Agent може да предлага write action
+    ↓
+    Guardrail проверява дали е допустимо
+    ↓
+    човекът го разрешава
+    ↓
+    paused workflow продължава
+    ↓
+    tool извършва реална промяна
+
+
+
+============================================================
+Optional Test 9 — Втори валиден status transition
+============================================================
+
+Този тест се изпълнява след успешен Test 8.
+
+DEV-102 вече трябва да бъде:
+    IN_PROGRESS
+
+В интерфейса изпратете:
+    Change DEV-102 status to DONE.
+
+Според business rules:
+    IN_PROGRESS → DONE
+    е валиден transition.
+
+Очакваме:
+    Approval card да се покаже.
+
+Натиснете:
+    Approve action
+
+В backend terminal-а трябва да се вижда:
+    [TOOL] update_ticket_status executing: DEV-102 -> DONE
+
+Проверете:
+    GET http://localhost:3000/api/tickets/DEV-102
+
+Очакваният статус е:
+    DONE
+
+Това доказва:
+    status transitions се валидират спрямо текущото
+    състояние на ticket-а
+    ↓
+    Guardrail-ът не проверява само формата
+    ↓
+    проверява реално business правило
+
+
+
+============================================================
+Optional Test 10 — DONE ticket не може да бъде върнат назад
+============================================================
+
+Този тест се изпълнява ако DEV-102 вече е:
+    DONE
+
+В интерфейса изпратете:
+    Change DEV-102 status to OPEN.
+
+Очакваме:
+    Guardrail-ът да блокира операцията.
+
+Approval card НЕ трябва да се показва.
+
+В backend terminal-а не трябва да се вижда:
+    [TOOL] update_ticket_status executing: DEV-102 -> OPEN
+
+Проверете:
+    GET http://localhost:3000/api/tickets/DEV-102
+
+Статусът трябва да остане:
+    DONE
+
+Това доказва:
+    DONE → OPEN
+    ↓
+    е забранен business transition
+    ↓
+    Agent-ът не може сам да заобиколи правилото
