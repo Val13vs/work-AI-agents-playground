@@ -1,148 +1,511 @@
 <section class="api-docs-page">
 
-  <div class="page-header">
-    <p class="eyebrow">Developer Portal</p>
+  <header class="page-hero">
 
-    <h1>API Documentation</h1>
+    <div class="hero-main">
 
-    <p>
-      Mock internal API documentation that will later
-      become accessible to the AI agent through tools.
-    </p>
-  </div>
+      <div class="hero-icon">
+        API
+      </div>
+
+      <div class="hero-copy">
+
+        <div class="eyebrow-row">
+
+          <span class="eyebrow">
+            Developer Portal
+          </span>
+
+          <span class="hero-badge">
+            Internal APIs
+          </span>
+
+        </div>
+
+        <h1>
+          API Documentation
+        </h1>
+
+        <p>
+          Explore internal resources, endpoints,
+          request payloads and response structures.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="hero-stats">
+
+      <div class="hero-stat">
+        <span>
+          Resources
+        </span>
+
+        <strong>
+          {{ documentation().length }}
+        </strong>
+      </div>
+
+      <div class="hero-stat">
+        <span>
+          Environment
+        </span>
+
+        <strong>
+          Internal
+        </strong>
+      </div>
+
+    </div>
+
+  </header>
+
 
   @if (error()) {
-    <div class="error-message">
-      {{ error() }}
+
+    <div class="error-banner">
+
+      <div class="error-icon">
+        !
+      </div>
+
+      <div>
+
+        <strong>
+          Documentation request failed
+        </strong>
+
+        <span>
+          {{ error() }}
+        </span>
+
+      </div>
+
     </div>
+
   }
 
-  <div class="docs-layout">
 
-    <section class="resource-list">
-      <h2>Resources</h2>
+  <div class="docs-workspace">
 
-      @if (loading()) {
+    <!-- RESOURCES -->
 
-        <p>Loading documentation...</p>
+    <aside class="resources-panel surface-panel">
 
-      } @else {
+      <div class="panel-header">
 
-        @for (
-          item of documentation();
-          track item.resource
-          ) {
+        <div>
 
-          <button
-            class="resource-card"
-            [class.selected]="
-              selectedDocumentation()?.resource === item.resource
-            "
-            (click)="selectResource(item.resource)"
-          >
+          <span class="panel-label">
+            API catalogue
+          </span>
 
-            <strong>
-              {{ item.resource }}
-            </strong>
+          <h2>
+            Resources
+          </h2>
 
-            <p>
-              {{ item.description }}
-            </p>
+        </div>
 
-            <span>
-              {{ item.endpoints.length }} endpoints
-            </span>
+        <span class="count-badge">
+          {{ documentation().length }}
+        </span>
 
-          </button>
+      </div>
 
-        } @empty {
 
-          <p>No API documentation available.</p>
+      <div class="panel-description">
+        Select an API resource to inspect
+        available endpoints and examples.
+      </div>
 
-        }
 
-      }
-    </section>
+      <div class="resource-list">
 
-    <section class="documentation-details">
+        @if (loading()) {
 
-      <h2>Documentation</h2>
+          <div class="loading-stack">
 
-      @if (detailsLoading()) {
+            <div class="resource-skeleton"></div>
+            <div class="resource-skeleton"></div>
+            <div class="resource-skeleton"></div>
 
-        <p>Loading API documentation...</p>
+          </div>
 
-      } @else if (
-        selectedDocumentation();
-        as documentation
-        ) {
+        } @else {
 
-        <div class="documentation-card">
+          @for (
+            item of documentation();
+            track item.resource
+            ) {
 
-          <h3>
-            {{ documentation.resource }} API
-          </h3>
+            <button
+              type="button"
+              class="resource-item"
+              [class.selected]="
+                selectedDocumentation()?.resource
+                  === item.resource
+              "
+              (click)="
+                selectResource(item.resource)
+              "
+            >
 
-          <p>
-            {{ documentation.description }}
-          </p>
+              <div class="resource-icon">
+                API
+              </div>
 
-          <div class="endpoints">
+              <div class="resource-content">
 
-            @for (
-              endpoint of documentation.endpoints;
-              track endpoint.method + endpoint.path
-              ) {
+                <div class="resource-title-row">
 
-              <article class="endpoint-card">
+                  <strong>
+                    {{ item.resource }}
+                  </strong>
 
-                <div class="endpoint-heading">
-
-                  <span class="method">
-                    {{ endpoint.method }}
+                  <span class="endpoint-count">
+                    {{ item.endpoints.length }}
                   </span>
-
-                  <code>
-                    {{ endpoint.path }}
-                  </code>
 
                 </div>
 
                 <p>
-                  {{ endpoint.description }}
+                  {{ item.description }}
                 </p>
 
-                @if (endpoint.requestExample) {
+                <span class="resource-meta">
+                  {{ item.endpoints.length }}
+                  endpoints available
+                </span>
 
-                  <h4>Request example</h4>
+              </div>
 
-                  <pre>{{ endpoint.requestExample | json }}</pre>
+              <span class="resource-arrow">
+                →
+              </span>
 
-                }
+            </button>
 
-                @if (endpoint.responseExample) {
+          } @empty {
 
-                  <h4>Response example</h4>
+            <div class="small-empty-state">
 
-                  <pre>{{ endpoint.responseExample | json }}</pre>
+              <span class="empty-icon">
+                API
+              </span>
 
-                }
+              <strong>
+                No resources available
+              </strong>
 
-              </article>
+              <p>
+                API resources will appear here.
+              </p>
 
-            }
+            </div>
+
+          }
+
+        }
+
+      </div>
+
+    </aside>
+
+
+    <!-- DOCUMENTATION -->
+
+    <section class="documentation-panel surface-panel">
+
+      <div class="panel-header">
+
+        <div>
+
+          <span class="panel-label">
+            Resource reference
+          </span>
+
+          <h2>
+            Documentation
+          </h2>
+
+        </div>
+
+
+        @if (
+          selectedDocumentation();
+          as documentation
+          ) {
+
+          <span class="selected-resource">
+            {{ documentation.resource }}
+          </span>
+
+        }
+
+      </div>
+
+
+      <div class="documentation-body">
+
+        @if (detailsLoading()) {
+
+          <div class="details-loading">
+
+            <div class="loading-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <strong>
+              Loading documentation
+            </strong>
+
+            <p>
+              Retrieving endpoint definitions...
+            </p>
 
           </div>
 
-        </div>
+        } @else if (
+          selectedDocumentation();
+          as documentation
+          ) {
 
-      } @else {
+          <article class="documentation-content">
 
-        <div class="empty-state">
-          Select an API resource to view its documentation.
-        </div>
+            <div class="resource-heading">
 
-      }
+              <div class="resource-heading-icon">
+                API
+              </div>
+
+              <div>
+
+                <span class="section-kicker">
+                  API Resource
+                </span>
+
+                <h3>
+                  {{ documentation.resource }} API
+                </h3>
+
+                <p>
+                  {{ documentation.description }}
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="resource-summary">
+
+              <div>
+
+                <span>
+                  Resource
+                </span>
+
+                <strong>
+                  {{ documentation.resource }}
+                </strong>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Endpoints
+                </span>
+
+                <strong>
+                  {{ documentation.endpoints.length }}
+                </strong>
+
+              </div>
+
+              <div>
+
+                <span>
+                  Visibility
+                </span>
+
+                <strong class="internal-value">
+                  Internal
+                </strong>
+
+              </div>
+
+            </div>
+
+
+            <section class="endpoints-section">
+
+              <div class="section-heading">
+
+                <div>
+
+                  <span class="section-kicker">
+                    HTTP interface
+                  </span>
+
+                  <h4>
+                    Available Endpoints
+                  </h4>
+
+                </div>
+
+                <span class="endpoint-total">
+                  {{ documentation.endpoints.length }}
+                </span>
+
+              </div>
+
+
+              <div class="endpoints">
+
+                @for (
+                  endpoint of documentation.endpoints;
+                  track endpoint.method + endpoint.path
+                  ) {
+
+                  <article class="endpoint-card">
+
+                    <div class="endpoint-heading">
+
+                      <span
+                        class="method"
+                        [class.method-get]="
+                          endpoint.method === 'GET'
+                        "
+                        [class.method-post]="
+                          endpoint.method === 'POST'
+                        "
+                        [class.method-put]="
+                          endpoint.method === 'PUT'
+                        "
+                        [class.method-delete]="
+                          endpoint.method === 'DELETE'
+                        "
+                      >
+                        {{ endpoint.method }}
+                      </span>
+
+
+                      <code class="endpoint-path">
+                        {{ endpoint.path }}
+                      </code>
+
+                    </div>
+
+
+                    <p class="endpoint-description">
+                      {{ endpoint.description }}
+                    </p>
+
+
+                    @if (
+                      endpoint.requestExample
+                      ) {
+
+                      <section class="example-section">
+
+                        <div class="example-heading">
+
+                          <div>
+                            <span class="example-dot request-dot"></span>
+
+                            Request example
+                          </div>
+
+                          <span>
+                            JSON
+                          </span>
+
+                        </div>
+
+                        <pre><code>{{ endpoint.requestExample | json }}</code></pre>
+
+                      </section>
+
+                    }
+
+
+                    @if (
+                      endpoint.responseExample
+                      ) {
+
+                      <section class="example-section">
+
+                        <div class="example-heading">
+
+                          <div>
+                            <span class="example-dot response-dot"></span>
+
+                            Response example
+                          </div>
+
+                          <span>
+                            JSON
+                          </span>
+
+                        </div>
+
+                        <pre><code>{{ endpoint.responseExample | json }}</code></pre>
+
+                      </section>
+
+                    }
+
+                  </article>
+
+                }
+
+              </div>
+
+            </section>
+
+          </article>
+
+        } @else {
+
+          <div class="details-empty">
+
+            <div class="empty-api-visual">
+
+              <div class="api-node node-one">
+              </div>
+
+              <div class="api-node node-two">
+              </div>
+
+              <div class="api-node node-three">
+              </div>
+
+              <div class="api-center">
+                API
+              </div>
+
+            </div>
+
+            <h3>
+              Select an API resource
+            </h3>
+
+            <p>
+              Choose a resource from the catalogue
+              to inspect endpoints, requests
+              and response examples.
+            </p>
+
+          </div>
+
+        }
+
+      </div>
 
     </section>
 
