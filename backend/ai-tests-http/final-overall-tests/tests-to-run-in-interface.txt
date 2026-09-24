@@ -551,3 +551,170 @@ Approval card НЕ трябва да се показва.
     е забранен business transition
     ↓
     Agent-ът не може сам да заобиколи правилото
+
+
+
+
+
+
+
+    Въпрос - Поток на действия:
+    Въпрос: What are the requirements of DEV-101?
+
+    Angular
+    ↓
+    POST /api/ai/chat
+    ↓
+    ai.routes.ts
+    ↓
+    session.service.ts
+    ↓
+    намира / създава MemorySession
+    ↓
+    ai.service.ts
+    ↓
+    run(assistantAgent)
+    ↓
+    assistant.agent.ts
+    ↓
+    LLM решава:
+    "трябва ми get_ticket"
+    ↓
+    get-ticket.tool.ts
+    ↓
+    tickets.data.ts
+    ↓
+    DEV-101
+    ↓
+    резултат обратно към Agent
+    ↓
+    Agent създава final answer
+    ↓
+    ai.service.ts
+    ↓
+    ai.routes.ts
+    ↓
+    Angular
+
+
+
+
+    Задаване на задача за промяна на данни - Поток на действия:
+    Задача: Change DEV-102 status to IN_PROGRESS.
+
+    Angular
+    ↓
+    ai.routes.ts
+    ↓
+    ai.service.ts
+    ↓
+    Coordinator
+    ↓
+    update_ticket_status
+    ↓
+    Zod validation
+    ↓
+    update-ticket-status.guardrail.ts
+    ↓
+    transition е позволен
+    ↓
+    needsApproval = true
+    ↓
+    Agent run се прекъсва
+    ↓
+    approval.service.ts
+    ↓
+    запазва RunState
+    ↓
+    Angular получава:
+    approval_required
+    ↓
+    показва Approval Card
+
+
+    После при Aprroval:
+
+    Approve
+    ↓
+    POST /api/ai/approvals/:approvalId
+    ↓
+    ai.routes.ts
+    ↓
+    approval.service.ts
+    ↓
+    намира RunState
+    ↓
+    state.approve(...)
+    ↓
+    run(... state ...)
+    ↓
+    update-ticket-status.tool.ts
+    ↓
+    execute()
+    ↓
+    ticket.status = IN_PROGRESS
+    ↓
+    final response
+
+
+
+    Разграничаване на отделните типове инструменти и действия в системата:
+
+    Agent:
+    "Трябва ми DEV-101."
+    ↓
+    Tool:
+    "Аз знам как да взема DEV-101."
+
+
+    Agent:
+    "Искам да променя статуса."
+    ↓
+    Guardrail:
+    "Позволено ли е?"
+
+    Human:
+    "Искам ли да го разреша?"
+
+    Tool:
+    "Извършвам промяната."
+
+
+
+    Валидации за Zod:
+
+    Път на действия:
+    User
+    ↓
+    LLM
+    ↓
+    LLM иска да извика tool
+    ↓
+    генерира arguments
+    {
+      ticketId: "DEV-102",
+      status: "IN_PROGRESS"
+    }
+    ↓
+    ZOD SCHEMA
+    ↓
+    валидни ли са?
+    ↓
+    ДА
+    ↓
+    tool може да продължи
+
+
+Да
+    {
+      "ticketId": "DEV-102",
+      "status": "IN_PROGRESS"
+    }
+
+Не
+    {
+      "ticketId": 102,
+      "status": "FINISHED"
+    }
+    ❌ ticketId не е string
+    ❌ FINISHED не е допустима стойност

@@ -26,7 +26,7 @@ const frontendSpecialistTool =
 
 export const assistantAgent = new Agent({
     name: 'Coordinator Agent',
-
+    model: 'gpt-5.6-sol',
     instructions: `
       You are an internal software development coordinator.
     
